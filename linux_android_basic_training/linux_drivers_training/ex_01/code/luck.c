@@ -1,3 +1,9 @@
+/*
+file name:luck.c
+purpose:A simple module
+creator:Bruse
+creat time:2012-07-27
+*/
 #include<linux/init.h>
 #include<linux/module.h>
 MODULE_LICENSE("Dual BSD/GPL");
