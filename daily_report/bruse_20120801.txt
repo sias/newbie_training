@@ -1,0 +1,3 @@
+									Char device driver
+	There are three kind of drivers in linux Char Device Driver,Block device driver and network device driver.The char device driver is the simplest one.If you want to study the char driver you must known about three structures:"struct file","struct file_operations","struct inode".many head files and some importentfunction.
+	When you want to creat a char driver,first you need to define a device structures to express a simple device driver next write some methods as "open","release" "read","write" and so on.second use file to contron the structure.Third you should set Module initialization function,it include getting the device number,apply device space and initialization it.fourth you should creat the unist function.At last read the license.
