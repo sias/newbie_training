@@ -91,11 +91,11 @@ ssize_t chardev_write(struct file *filp,const char *buff,size_t size,loff_t *off
 }
 static struct file_operations chardev_fops = {
 
-              .owner = THIS_MODULE,
-              .open = chardev_open,
-              .release  = chardev_release,
-              .read = chardev_read,
-              .write = chardev_write,
+       .owner = THIS_MODULE,
+       .open = chardev_open,
+       .release  = chardev_release,
+       .read = chardev_read,
+       .write = chardev_write,
 };
 
 //设备驱动加载模块
