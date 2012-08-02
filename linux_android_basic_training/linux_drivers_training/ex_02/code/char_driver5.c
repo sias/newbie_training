@@ -1,8 +1,10 @@
 /*
 file name:char_driver5.c
 purpose:char device driver
-creator:Bruse
-creat time:2012-08-01
+creator:Bruse li
+create time:2012-08-01
+modify history:
+Bruse li,2012-08-2
 */
 #include<linux/module.h>
 #include<linux/fs.h>
@@ -16,7 +18,7 @@ creat time:2012-08-01
 #include<asm/io.h>
 #include<asm/system.h>
 #include<asm/uaccess.h>
-#include<linux/device.h>  /*device create,class create*/
+#include<linux/device.h>  /*device_create,class_create*/
 #define RANGE 1024
 #define DEVICE_NAME  "creat_inode"//定义设备名
 #define DEVICE_MAJOR  52    //手动定义设备的主设备号
@@ -24,7 +26,7 @@ creat time:2012-08-01
 static int chardev_major = DEVICE_MAJOR ;
 static int chardev_minor =DEVICE_MINOR;
 
-// 设备结构体
+//设置设备结构体
 struct chardev_dev
 {
        struct cdev cdev;
@@ -35,13 +37,11 @@ static struct chardev_dev dev;
 static struct class *simple_class;
 int chardev_open(struct inode *inode,struct file *filp)
 {
-       // MOD_INC_USE_COUNT;
 	filp->private_data=chardev_devp;
         return 0;
 }
 int chardev_release(struct inode *inode,struct file *filp)
 {
-       // MOD_DEC_USE_COUNT;
         return 0;
 }
 ssize_t chardev_read(struct file *filp,char *buff,size_t size,loff_t *offp)
@@ -55,7 +55,7 @@ ssize_t chardev_read(struct file *filp,char *buff,size_t size,loff_t *offp)
 	if(count>RANGE-p)
 		count = RANGE - p;
 	if(copy_to_user(buff,(void *)(dev->str+p),count)){
-//			ret = -EFAULT;
+			ret = -EFAULT;
 		printk(KERN_ALERT "something done\n");
 	}else {
 		*offp +=count;
@@ -89,24 +89,20 @@ ssize_t chardev_write(struct file *filp,const char *buff,size_t size,loff_t *off
 
 
 }
-//int chardev_ioctl(struct inode *inode,struct file *filp,unsigned int cmd,unsigned long arg)
-//{
-
-//}
 static struct file_operations chardev_fops = {
 
               .owner = THIS_MODULE,
               .open = chardev_open,
               .release  = chardev_release,
-//              .ioctl = chardev_ioctl,
               .read = chardev_read,
               .write = chardev_write,
 };
 
 //设备驱动加载模块
 static int chardev_init(void)
-{	printk(KERN_WARNING "init int int int int int \n");
-       int result;
+{      
+       int err=0;
+       int result=0;
        dev_t devno = MKDEV(chardev_major,chardev_minor);  
        if(chardev_major)   
               result = register_chrdev_region(devno,1,DEVICE_NAME); 
@@ -117,11 +113,10 @@ static int chardev_init(void)
        }
 
        if(result < 0)
-       return result;
+	      return result;
        chardev_devp=kmalloc(sizeof(struct chardev_dev),GFP_KERNEL);
        memset(chardev_devp,0,sizeof(struct chardev_dev));	
 
-       int err;
        devno = MKDEV (chardev_major,chardev_minor);
        cdev_init(&dev.cdev,&chardev_fops);
        dev.cdev.owner = THIS_MODULE; 
@@ -129,15 +124,14 @@ static int chardev_init(void)
        err = cdev_add(&dev.cdev,devno,1);  //向系统添加该设备
 
        if(err)
-              printk("Error %d ",err);
+              printk("Cdev_add Error %d ",err);
 
-	printk(KERN_WARNING ",,,,,,,,,,,,,,,,,,\n");	
 	simple_class=class_create(THIS_MODULE,DEVICE_NAME);
 	if(IS_ERR(simple_class)){
-		printk("ERR:cannot creat a simple class");
+		printk(KERN_WARNING "ERR:cannot creat a simple class");
 	}
 	device_create(simple_class,NULL,MKDEV(chardev_major,chardev_minor),NULL,DEVICE_NAME);
-		printk("I am in\n");
+		printk(KERN_INFO "Have created an inode under dev\n");
 		return 0;
   
 }
