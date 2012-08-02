@@ -16,11 +16,13 @@ creat time:2012-08-01
 #include<asm/io.h>
 #include<asm/system.h>
 #include<asm/uaccess.h>
-#define RANGE 0x1000
-#define DEVICE_NAME  "chardev_name"//定义设备名
-#define DEVICE_MAJOR  40    //手动定义设备的主设备号
+#include<linux/device.h>  /*device create,class create*/
+#define RANGE 1024
+#define DEVICE_NAME  "creat_inode"//定义设备名
+#define DEVICE_MAJOR  52    //手动定义设备的主设备号
+#define DEVICE_MINOR  0     //定义次设备号
 static int chardev_major = DEVICE_MAJOR ;
-
+static int chardev_minor =DEVICE_MINOR;
 
 // 设备结构体
 struct chardev_dev
@@ -30,6 +32,7 @@ struct chardev_dev
 };
 static struct chardev_dev *chardev_devp;
 static struct chardev_dev dev;
+static struct class *simple_class;
 int chardev_open(struct inode *inode,struct file *filp)
 {
        // MOD_INC_USE_COUNT;
@@ -53,7 +56,7 @@ ssize_t chardev_read(struct file *filp,char *buff,size_t size,loff_t *offp)
 		count = RANGE - p;
 	if(copy_to_user(buff,(void *)(dev->str+p),count)){
 //			ret = -EFAULT;
-		printk(KERN_WARNING "something done\n");
+		printk(KERN_ALERT "something done\n");
 	}else {
 		*offp +=count;
 		ret =count;
@@ -102,14 +105,14 @@ static struct file_operations chardev_fops = {
 
 //设备驱动加载模块
 static int chardev_init(void)
-{
+{	printk(KERN_WARNING "init int int int int int \n");
        int result;
-       dev_t devno = MKDEV(chardev_major,1);  
+       dev_t devno = MKDEV(chardev_major,chardev_minor);  
        if(chardev_major)   
               result = register_chrdev_region(devno,1,DEVICE_NAME); 
        else
        {   
-              result = alloc_chrdev_region(&devno ,0 ,1,DEVICE_NAME);
+              result = alloc_chrdev_region(&devno ,chardev_minor ,1,DEVICE_NAME);
               chardev_major = MAJOR(devno);
        }
 
@@ -119,7 +122,7 @@ static int chardev_init(void)
        memset(chardev_devp,0,sizeof(struct chardev_dev));	
 
        int err;
-       devno = MKDEV (chardev_major,1);
+       devno = MKDEV (chardev_major,chardev_minor);
        cdev_init(&dev.cdev,&chardev_fops);
        dev.cdev.owner = THIS_MODULE; 
        dev.cdev.ops = &chardev_fops;  //建立设备文件操作与系统调用之间的连接
@@ -127,14 +130,24 @@ static int chardev_init(void)
 
        if(err)
               printk("Error %d ",err);
-       return 0;
+
+	printk(KERN_WARNING ",,,,,,,,,,,,,,,,,,\n");	
+	simple_class=class_create(THIS_MODULE,DEVICE_NAME);
+	if(IS_ERR(simple_class)){
+		printk("ERR:cannot creat a simple class");
+	}
+	device_create(simple_class,NULL,MKDEV(chardev_major,chardev_minor),NULL,DEVICE_NAME);
+		printk("I am in\n");
+		return 0;
   
 }
 static void chardev_exit(void)
 {
+       device_destroy(simple_class,MKDEV(chardev_major,chardev_minor));
+       class_destroy(simple_class);
        cdev_del(&dev.cdev);
        kfree(chardev_devp); 
-       unregister_chrdev_region(MKDEV(chardev_major,0),1);  //释放设备号
+       unregister_chrdev_region(MKDEV(chardev_major,chardev_minor),1);  //释放设备号
 }
 module_init(chardev_init);
 module_exit(chardev_exit);
