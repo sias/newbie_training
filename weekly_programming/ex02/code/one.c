@@ -5,6 +5,7 @@ creator:Bruse li
 create time:2012-08-03
 modify history:
 Bruse li,2012-08-03
+Create a sub function
 */
 #include<stdio.h>
 /*计算一个整数中一的个数*/
@@ -25,13 +26,11 @@ int ones(int num)
 int main()
 {
 	int n;
-	int code;
 	int counter;
 	printf("please enter a number:");
 	scanf("%d",&n);
-	code=n;
 	counter=ones(n);//调用ones()函数
-        printf("There are %d one in num %d \n",counter,code);   
+        printf("There are %d one in num %d \n",counter,n);   
   
    	return 0;
 }
