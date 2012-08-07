@@ -1,3 +1,10 @@
+/*
+file name:char_ioctl.c
+purpose:char device driver
+creator:Bruse
+create time:2012-08-07
+*/
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>
@@ -8,12 +15,11 @@
 
 #define TEST_MAGIC_NUM 'k'
 #define CHARDEV_IOCPRINT  _IO(TEST_MAGIC_NUM,1)
-//#define CHAR_READ _IOW(TEST_MAGIC_NUM,1,int)
+#define CHAR_READ _IOW(TEST_MAGIC_NUM,1,int)
 #define CHAR_WRITE _IOR(TEST_MAGIC_NUM,1,int)
 int main(void)
 {	
 	int num;
-//	char buf[1024];
 	int fd =open("/dev/create_ioctl",O_RDWR);
 	if(fd<0)
 	{
