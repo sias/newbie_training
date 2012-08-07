@@ -1,6 +1,6 @@
 /*
-file name:char_ioctl.c
-purpose:char device driver
+file name:test.c
+purpose:test the ioctl 
 creator:Bruse
 create time:2012-08-07
 */
