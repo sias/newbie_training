@@ -3,6 +3,8 @@ file name:char_ioctl.c
 purpose:char device driver
 creator:Bruse
 create time:2012-08-07
+modify history:
+Bruse li,2012-08-08
 */
 #include<linux/module.h>
 #include<linux/fs.h>
@@ -23,10 +25,10 @@ create time:2012-08-07
 #define DEVICE_NAME  "create_ioctl"//定义设备名
 #define DEVICE_MAJOR  57    //手动定义设备的主设备号
 #define DEVICE_MINOR  0     //定义次设备号
-#define CHARDEV_IOC_MAGIC 'k'
-#define CHARDEV_IOCPRINT _IO(CHARDEV_IOC_MAGIC,1)
-#define CHAR_WRITE  _IOR(CHARDEV_IOC_MAGIC,1,int)
-#define CHAR_READ _IOW(CHARDEV_IOC_MAGIC,3,int)
+#define IOCTL_CHARDEV_IOC_MAGIC 'k'
+#define IOCTL_CHARDEV_IOCPRINT _IO(CHARDEV_IOC_MAGIC,1)
+#define IOCTL_CHAR_READ  _IOR(CHARDEV_IOC_MAGIC,1,int)
+#define IOCTL_CHAR_WRITE _IOW(CHARDEV_IOC_MAGIC,3,int)
 #define CHARDEV_IOC_MAXNR 3
 static int chardev_major = DEVICE_MAJOR ;
 static int chardev_minor =DEVICE_MINOR;
@@ -70,22 +72,22 @@ ssize_t chardev_read(struct file *filp,char *buff,size_t size,loff_t *offp)
 	return ret;	
 	
 }
-
+//I/O控制函数
 long chardev_ioctl(struct file *filp,unsigned int cmd,unsigned long arg)
 {
 	int ret=0;
 	int ioarg=0;
 	switch(cmd)
 	{	
-		case CHARDEV_IOCPRINT:
+		case IOCTL_CHARDEV_IOCPRINT:
 			printk(" cmd chardev_iocprint done\n");
 			break;
-		case CHAR_WRITE:
+		case IOCTL_CHAR_READ:
 			printk("cmd put_user\n");
 			ioarg=110;
 			ret=__put_user(ioarg,(int *)arg);
 			break;
-		case CHAR_READ:
+		case IOCTL_CHAR_WRITE:
 			ret=__get_user(ioarg,(int *)arg);
 			break;
 		default:
@@ -129,7 +131,8 @@ static struct file_operations chardev_fops = {
 static int chardev_init(void)
 {      
 	int result=0;
-	int err =0;	
+	int err =0;
+	//分配设备号	
 	dev_t devno = MKDEV(chardev_major,chardev_minor);  
 	if(chardev_major)   
 		result = register_chrdev_region(devno,1,DEVICE_NAME); 
@@ -140,9 +143,10 @@ static int chardev_init(void)
 	}
 	if(result < 0)
 		return result;
+	//分配设备结构体空间
 	chardev_devp=kmalloc(sizeof(struct chardev_dev),GFP_KERNEL);
 	memset(chardev_devp,0,sizeof(struct chardev_dev));	
-
+	//注册设备
 	devno = MKDEV (chardev_major,chardev_minor);
 	cdev_init(&dev.cdev,&chardev_fops);
 	dev.cdev.owner = THIS_MODULE; 
@@ -151,7 +155,7 @@ static int chardev_init(void)
      
 	if(err)
 		printk("Error %d ",err);
-	
+	//自动在/DEV下创建节点
 	simple_class=class_create(THIS_MODULE,DEVICE_NAME);
 	if(IS_ERR(simple_class)){
 		printk("ERR:cannot creat a simple class");
