@@ -3,6 +3,8 @@ file name:timer.c
 purpose:char timer driver
 creator:Bruse li
 create time:2012-08-09
+modify time:
+Bruse li,2012-08-14
 */
 #include<linux/miscdevice.h>
 #include<linux/module.h>
@@ -23,39 +25,39 @@ create time:2012-08-09
 struct chardev_dev
 {
 	struct cdev cdev;//cdev 结构体
-	atomic_t counter;
-	struct timer_list stimer;
+	atomic_t counter;//定义原子变量
+	struct timer_list stimer;//内核定时器结构
 };
 static struct chardev_dev *chardev_devp;
 //定时器处理函数
 static void second_timer_handle(unsigned long arg)
 {
-	mod_timer(&chardev_devp->stimer,jiffies + HZ);
-	atomic_inc(&chardev_devp->counter);
+	mod_timer(&chardev_devp->stimer,jiffies + HZ);//激活已经注册的定时器
+	atomic_inc(&chardev_devp->counter);//增加一个原子变量
 	printk(KERN_NOTICE "current jiffies is %ld\n",jiffies);
 }
 //文件打开函数
 int chardev_open(struct inode *inode,struct file *filp)
-{
-	init_timer(&chardev_devp->stimer);
-	chardev_devp->stimer.function =&second_timer_handle;
-	chardev_devp->stimer.expires=jiffies+HZ;
+{	
+	init_timer(&chardev_devp->stimer);//定时器结构初始化
+	chardev_devp->stimer.function =&second_timer_handle;//到达期望计数器值时调用FUNCTION并传递DATA参数
+	chardev_devp->stimer.expires=jiffies+HZ;//期望定时器执行的计数器的值
 
-        add_timer(&chardev_devp->stimer);
-	atomic_set(&chardev_devp->counter,0);
+        add_timer(&chardev_devp->stimer);//将定时器对象加入系统
+	atomic_set(&chardev_devp->counter,0);//将原子变量的值设置为0
 	return 0;
 }
 //文件释放函数
 int chardev_release(struct inode *inode,struct file *filp)
 {
-	del_timer(&chardev_devp->stimer);
+	del_timer(&chardev_devp->stimer);//在定时器到期之前禁止一个已经注册的定时器
         return 0;
 }
 //读函数
 ssize_t chardev_read(struct file *filp,char *buf,size_t size,loff_t *offp)
 {
 	int counter;
-	counter=atomic_read(&chardev_devp->counter);
+	counter=atomic_read(&chardev_devp->counter);//读原子操作返回conter值 
 	if(put_user(counter,(int*)buf))
 		return -EFAULT;
 	else
