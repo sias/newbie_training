@@ -4,7 +4,7 @@ purpose:char timer driver
 creator:Bruse li
 create time:2012-08-09
 modify time:
-Bruse li,2012-08-14
+Bruse li,2012-08-16
 */
 #include<linux/miscdevice.h>
 #include<linux/module.h>
@@ -81,8 +81,6 @@ static struct miscdevice misc_dev =
 static int chardev_init(void)
 {      //杂项设备，主设备号为10
 	int ret;
-	chardev_devp=kmalloc(sizeof(struct chardev_dev),GFP_KERNEL);
-	memset(chardev_devp,0,sizeof(struct chardev_dev));
 	ret = misc_register(&misc_dev);
 	if (ret)
 	{
