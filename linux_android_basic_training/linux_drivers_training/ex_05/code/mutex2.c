@@ -1,5 +1,5 @@
 /*
-file name:mutex22.c
+file name:mutex2.c
 purpose:device driver about concurrency
 creator:Bruse li
 create time:2012-08-08
@@ -8,7 +8,7 @@ Bruse li,2008-08-15
 add the function of semaphore initialization
 */
 #include <linux/module.h>
-#include<linux/miscdevice.h>
+#include <linux/miscdevice.h>
 #include <linux/types.h>
 #include <linux/fs.h>
 #include <linux/errno.h>
@@ -17,10 +17,10 @@ add the function of semaphore initialization
 #include <linux/init.h>
 #include <linux/cdev.h>
 #include <asm/io.h>
-#include<linux/slab.h>
+#include <linux/slab.h>
 #include <asm/system.h>
 #include <asm/uaccess.h>
-#include<linux/delay.h> 
+#include <linux/delay.h> 
 #define MISC_NAME  "misc_kitty"//定义设备名 
 #define MEMDEV_SIZE 1024  //分配的内存大小
  
@@ -121,12 +121,17 @@ static struct miscdevice misc_dev={
 	.fops = &chardev_fops,
 };
 
- /*设备驱动模块加载函数*/
+/*设备驱动模块加载函数*/
 static int __init memdev_init(void)
 {
 	int ret=0;
 	//杂项设备，主设备号为10
 	chardev_devp=kmalloc(sizeof(struct mem_dev),GFP_KERNEL);
+	if(!chardev_devp)
+	{	
+		printk(KERN_WARING "kmalloc error\n");
+		return 0;
+	}
 	memset(chardev_devp,0,sizeof(struct mem_dev));
 	ret = misc_register(&misc_dev);
 	if(ret)
