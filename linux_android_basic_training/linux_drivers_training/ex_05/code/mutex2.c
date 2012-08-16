@@ -1,8 +1,11 @@
 /*
-file name:mutex.c
+file name:mutex22.c
 purpose:device driver about concurrency
 creator:Bruse li
 create time:2012-08-08
+modify history:
+Bruse li,2008-08-15
+add the function of semaphore initialization
 */
 #include <linux/module.h>
 #include<linux/miscdevice.h>
@@ -16,17 +19,19 @@ create time:2012-08-08
 #include <asm/io.h>
 #include<linux/slab.h>
 #include <asm/system.h>
-#include <asm/uaccess.h> 
+#include <asm/uaccess.h>
+#include<linux/delay.h> 
 #define MISC_NAME  "misc_kitty"//定义设备名 
 #define MEMDEV_SIZE 1024  //分配的内存大小
  
 struct mem_dev
 {
 	unsigned int size;
-	char*data;
+	unsigned char data[MEMDEV_SIZE];
 	struct semaphore sem; 
 	struct cdev mem_cdev;
 };
+//static struct semaphore sem;
 struct mem_dev *chardev_devp; /*设备结构体指针*/
 /*文件打开函数*/ 
 static int mem_open(struct inode *inode,struct file *filp)
@@ -44,7 +49,6 @@ static int mem_release(struct inode *inode,struct file *filp)
 static ssize_t mem_read(struct file *filp,char __user *buf, size_t size, loff_t *ppos)
 {
 	int ret = 0;
-	struct mem_dev *dev;	
 	unsigned long p;
 	unsigned long count;
 	printk("mem_read.\n");
@@ -56,9 +60,11 @@ static ssize_t mem_read(struct file *filp,char __user *buf, size_t size, loff_t 
 	if(count> (MEMDEV_SIZE-p))
 		count= MEMDEV_SIZE - p;
 	if(down_interruptible(&chardev_devp->sem))//锁定互斥信号量
+	{		
 		return -ERESTARTSYS;
+	}
 	//读取数据到用户空间
-	if(copy_to_user(buf,chardev_devp->data+p, count)){
+	if(copy_to_user(buf,chardev_devp->data+p, count)){		
 		ret= -EFAULT;
 		printk("copyfrom user failed\n");
 	}else{
@@ -66,11 +72,12 @@ static ssize_t mem_read(struct file *filp,char __user *buf, size_t size, loff_t 
 		ret= count;
 		printk("read%ld bytes from dev\n", count);
 	}
-	up(&dev->sem);//解锁互斥信号量
+	mdelay(10000);
+	up(&chardev_devp->sem);//解锁互斥信号量
 	return ret;
 }
  
-static ssize_t mem_write(struct file *filp,const char __user *buf, size_t size, loff_t *ppos)//注意：第二个参数和read方法不同
+static ssize_t mem_write(struct file *filp,const char __user *buf, size_t size, loff_t *ppos)//第二个参数和read方法不同
 {
 	int ret = 0;
 	unsigned long p;
@@ -81,17 +88,22 @@ static ssize_t mem_write(struct file *filp,const char __user *buf, size_t size, 
 	if(p> MEMDEV_SIZE)
 		return 0;
 	if(count> (MEMDEV_SIZE-p))
+	{	
 		count= MEMDEV_SIZE - p;
+	}
 	if(down_interruptible(&chardev_devp->sem))//锁定互斥信号量
+	{	
 		return-ERESTARTSYS;
-	if(copy_from_user(chardev_devp->data+p,buf, count)){
+	}
+	if(copy_from_user(chardev_devp->data+p,buf,count)){
 		ret= -EFAULT;
 		printk("copyfrom user failed\n");
 	}else{
 		*ppos+= count;
 		ret= count;
-		printk("write%ld bytes to dev\n", count);
+		printk("write%ld bytes to dev\n",count);
 	}
+	mdelay(10000);
 	up(&chardev_devp->sem);//解锁互斥信号量
 	return ret;
 } 
@@ -122,6 +134,7 @@ static int __init memdev_init(void)
 		printk("misc_register error\n");
 		return ret;
          }
+	sema_init(&chardev_devp->sem,1);//初始化信号量
 	return 0;       
 } 
 static void memdev_exit(void)
