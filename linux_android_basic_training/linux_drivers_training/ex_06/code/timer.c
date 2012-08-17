@@ -91,7 +91,6 @@ static int chardev_init(void)
 }
 static void chardev_exit(void)
 {
-	kfree(chardev_devp);
 	misc_deregister(&misc_dev);
 }
 module_init(chardev_init);
