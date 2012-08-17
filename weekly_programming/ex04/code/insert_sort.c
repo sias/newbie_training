@@ -3,56 +3,83 @@ file name:insert_sort.c
 porpurse:sort  nums
 creator:Bruse li
 create time:2012-08-16
+modify time:
+Bruse li,2012-08-17
 */
 #include<stdio.h>
 #include<math.h>
 #include<time.h>
+#define NUM_SIZE 100000
+#define RANGE_NUM rand()%99999+1
+int i;
+int num[NUM_SIZE];
+//获得10万个随机数
+void dif_num()
+{
+	srand((unsigned)time(NULL));
+	for(i=0;i<NUM_SIZE;i++)
+	{
+		num[i]=RANGE_NUM;
+	}
+}
+//获得10万个相同随机数
+void sam_num()
+{
+	for(i=0;i<NUM_SIZE;i++)
+	{
+		srand((unsigned)time(NULL));
+		num[i]=RANGE_NUM;
+	}
+}
+//获得10万个递增随机数
+void inc_num()
+{
+	for(i=0;i<NUM_SIZE;i++)
+	{
+		num[i]=i;	
+	}
+}
+//打印排序后的100个数
+void print()
+{
+	for(i=0;i<100;i++)
+	{
+		printf("%d\n",num[i]);
+	}
+
+}
 int main()
 {
-	int i,j,temp;
-	int choose;
-	int num[99999];
+	clock_t begin,end;
+	int j,temp,choose;
 	printf("please make your choose:\n(1):产生10万随机数.\n(2):产生十万相同随机数.\n(3):产生十万递增数\n:");
-	scanf("%d",&choose);
+        scanf("%d",&choose);
 	switch(choose)
-	/*产生十万个随机数*/
 	{
 	case 1:
-		srand((unsigned)time(NULL));
-		for(i=0;i<100000;i++)
-		{
-			num[i]=rand()%99999+1;	
-		}
+		dif_num();
 		break;
-		//产生十万个相同随机数
 	case 2:
-		for(i=0;i<100000;i++)
-		{
-			srand((unsigned)time(NULL));
-			num[i]=rand()%99999+1;
-		}
+		sam_num();
 		break;
 	case 3:
-		//产生十万个递增数
-		for(i=0;i<100000;i++)
-		{
-			num[i]=i;
-		}
+		inc_num();
 		break;
 	default:
 		printf("error choice!\n");
-	return 0;
 	}
-	//插入排序
-	for(i=1;i<10000;i++)
-	{
+	begin=clock();
+	for(i=0;i<NUM_SIZE;i++)
+	{	
 		temp=num[i];
 		for(j=i;(j>0)&&(temp<num[j-1]);j--)
 		{
 			num[j]=num[j-1];
 		}
-	num[j]=temp;
+		num[j]=temp;
 	}
-	for(i=0;i<1000;i++)
-	printf("%d\n",num[i]);
+	end=clock();
+	print();
+	printf("%lf  second\n",(double)(end-begin)/CLOCKS_PER_SEC);
+	return 0;
 }
