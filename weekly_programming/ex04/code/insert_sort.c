@@ -27,8 +27,7 @@ void sam_num()
 {
 	for(i=0;i<NUM_SIZE;i++)
 	{
-		srand((unsigned)time(NULL));
-		num[i]=RANGE_NUM;
+		num[i]=srand((unsigned)time(NULL));
 	}
 }
 //获得10万个递增随机数
@@ -42,7 +41,7 @@ void inc_num()
 //打印排序后的100个数
 void print()
 {
-	for(i=0;i<100;i++)
+	for(i=0;i<NUM_SIZE;i++)
 	{
 		printf("%d\n",num[i]);
 	}
