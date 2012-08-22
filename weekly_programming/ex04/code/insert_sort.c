@@ -25,9 +25,12 @@ void dif_num()
 //获得10万个相同随机数
 void sam_num()
 {
+	int x;
+	srand((unsigned)time(NULL))
+	x=RANGE_NUM;
 	for(i=0;i<NUM_SIZE;i++)
 	{
-		num[i]=srand((unsigned)time(NULL));
+		num[i]=x;
 	}
 }
 //获得10万个递增随机数
