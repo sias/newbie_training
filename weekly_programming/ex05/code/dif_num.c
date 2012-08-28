@@ -10,21 +10,25 @@ Bruse li,2012-08-27
 #include<stdlib.h>
 #include<math.h>
 #include<string.h>
-#define N 1000
-#define M 500
+#define N 10000000
+#define M 5000000
 int main()
 {
 	int i;
 	int m=M;
 	FILE *fp;
-	fp=fopen("file.txt","at+");
+	if((fp=fopen("file.txt","at+"))==NULL)
+	{
+		printf("errno on open!\n");
+		exit(1);
+	}
 	for(i=0;i<N;i++)
 	{	
-		if((rand()%(N-i))<M)
+		if((rand()%(N-i))<m)
 		{
 			fprintf(fp,"%5d",i);
 			m--;	
 		}
 	}
-		fclose(fp);
+	fclose(fp);
 }
