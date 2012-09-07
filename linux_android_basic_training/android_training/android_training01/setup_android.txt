@@ -1,0 +1,27 @@
+1.安装java 环境 atp-get install sun-java6-jdk sun-jave6-jre
+2.下载主要的开发环境：eclipse + android SDK + ADT
+  （1）eclipse:http://www.eclipse.org/downloads/
+       这里选择了 linux 下的Eclipse for RCP and RAP Developers
+  （2）SDK包：http://developer.android.com/
+       android-sdk_r06-linux_86.tgz 
+  （3）把eclipse和SDK直接解压缩，配置下环境变量PATH，如我把 eclipse 拷贝到 /opt/ 目录下 , 
+       把 sdk 放到 ~/software/android_sdk ，就在 ~/.bashrc 文件下分别增       加以下两句：
+       PATH=/opt/eclipse:$PATH
+       PATH=~/software/android_sdk/tools:$PATH
+       然后source一下~/.bashrc
+       
+        配置eclipse:
+	运行 eclipse, 在菜单 help->install new software 中增加以下地址以安装 
+ 	ADT:https://dl-ssl.google.com/android/eclipse/
+	确认后，选择DDMS和ADT 按提示进一步安装就可以了。
+
+	ＡＤＴ安装完成后，还需要在 eclipse 里配置ＳＤＫ。在配置 sdk 前，可以选择先升级sdk 。
+	Android SDK 在 2.1 之前，是可以选择在原有的版本上直接增加多个版本的ＳＤＫ。如最新的
+	android-sdk_r06-linux_86.tgz, 解压后其实还不是完整的ＳＤＫ，需要在线升级一下。
+	
+	解压文件后，直入 tools 目录，运行 android 文件即可：
+	把想安装的都选择上就可以了，所有的 sdk 版本都是可以共存的，所以按自已的需要进行安装。
+	点install Selected 后，就等待下载完成。所有版本的的 sdk 都会下载到当前sdk 的 platforms 目录下去。
+	安装完ＡＤＴ后，在eclipse中点击Window->Preferences，将可以看到关于Android的配置，
+	设置好SDK的路径后装可以看到已经下载到本地的ＳＤＫ。
+  
