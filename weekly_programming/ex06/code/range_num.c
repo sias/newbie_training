@@ -36,20 +36,22 @@ int main()
 	for(i=0;i<N;i++)
 	{
 		a[i>>SHIFT]|=~(1<<(i&MASK));
+		printf("clr  %d...\n",a[i]);
 		//*(p+i)=0;
 	}
 	for(i=0;i<K;i++)
 	{
 		fscanf(fp,"%d ",&num);
-		a[i>>SHIFT]|=(1<<(i&MASK));
-		//*(p+num)=1;
+		a[num>>SHIFT]&= (1<<(num&MASK));
+		//*(p+num)=1;	
+		printf("set %d..\n",a[num]);
 	}
 	for(i=0;i<N;i++)
 	{
 		//while(*(p+i))
-		while(a[i>>SHIFT])
+		while(a[i])
 		{
-			printf("....%d....\n",i);
+//			printf("....%d....\n",i);
 			break;
 		}	
 	}
