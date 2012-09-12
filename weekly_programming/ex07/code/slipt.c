@@ -13,16 +13,16 @@ create time:2012-09-8
 int i=0;
 int j;
 int num[NUM_SIZE];
-void swap(int a,int b)
+void swap(int &a,int &b)
 {
-	int temp;
-	temp=a;
-	a=b;
-	b=temp;
+	int *temp;
+	temp=&a;
+	&a=&b;
+	&b=temp;
 }
 void dif_num()
 {
-	srand((unsigned)time(NULL));
+	//srand((unsigned)time(NULL));
 	for(i=0;i<NUM_SIZE;i++)
 	{
 		num[i]=RANGE_NUM;
@@ -51,25 +51,29 @@ int split(int num[],int low,int high)
 	int j=high;
 	int x=num[low];
 	while(i<=j)
-	{
+	{	
+		printf("..%d..%d",num[i],x);
 		printf("in split 1 while circle\n");
 		while(num[i]<=x)
 		{
 			printf("in while 1\n");
 			i++;
+			sleep(3);
+			printf("......%d...",i);
 		}
 		while(num[j]>x)
 		{
 			printf("in while 2\n");
+				sleep(3);
 			j--;
 		}
 		if(i<j)
 		{
 			printf("in while 3\n");
-			swap(num[i],num[j]);
+			swap(&num[i],&num[j]);
 		}
 	}
-	swap(num[low],num[j]);
+	swap(&num[low],&num[j]);
 	return j;
 }
 int quick_sort(int num[],int low,int high)
@@ -94,8 +98,8 @@ void main()
 	high=NUM_SIZE-1;
 	begin1=clock();
 	printf("before dif_num\n");
-	sam_num();
-	for(i=0;i<100;i++)
+	dif_num();
+	for(i=0;i<10;i++)
 	{
 		printf("%d\n",num[i]);
 	}
