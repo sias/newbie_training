@@ -117,5 +117,8 @@ void main()
 		fprintf(fp3,"%d ",n[i]);
 	}
 	end3=clock();	
-	printf("\ninc_num range time is: %lf second\n",(double)(end3-begin3)/CLOCKS_PER_SEC);	
+	printf("\ninc_num range time is: %lf second\n",(double)(end3-begin3)/CLOCKS_PER_SEC);
+	fclose(fp1);
+	fclose(fp2);
+	fclose(fp3);	
 }
