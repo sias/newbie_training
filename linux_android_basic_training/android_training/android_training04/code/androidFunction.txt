@@ -1,0 +1,51 @@
+package com.bruse.bmi2;
+
+import java.text.DecimalFormat;
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+	private EditText fieldheight,fieldweight;
+	private double height,weight;
+	private Button button;
+	private TextView result;
+	private double BMI;
+	private DecimalFormat nf;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        findview();
+        button =(Button)findViewById(R.id.submit);
+		button.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				height = Double.parseDouble(fieldheight.getText().toString())/100;
+		    		weight = Double.parseDouble(fieldweight.getText().toString());
+		    		nf = new DecimalFormat("0.00");
+		    		BMI = weight /(height * height);
+		    		geton();
+			}      	
+        	});
+    }
+    private void geton(){
+    	if(BMI>25){
+    		result.setText("your BMI IS "+nf.format(BMI)+ "您有点偏胖");
+    	}else if(BMI<20){
+    		result.setText("your BMI IS "+nf.format(BMI)+ "您改多吃点");
+    	}else{
+    		result.setText("your BMI IS "+nf.format(BMI)+ "请继续保持");
+    	}
+    }
+    private void findview(){
+    	 button =(Button)findViewById(R.id.submit);
+    	 fieldheight = (EditText)findViewById(R.id.editText1);
+     	 fieldweight = (EditText)findViewById(R.id.editText2);
+         result =(TextView)findViewById(R.id.result);
+    }
+}
