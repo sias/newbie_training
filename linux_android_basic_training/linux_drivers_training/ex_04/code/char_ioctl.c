@@ -25,7 +25,7 @@ Bruse li,2012-08-08
 #define DEVICE_NAME  "create_ioctl"//定义设备名
 #define DEVICE_MAJOR  57    //手动定义设备的主设备号
 #define DEVICE_MINOR  0     //定义次设备号
-#define IOCTL_CHARDEV_IOC_MAGIC 'k'
+#define CHARDEV_IOC_MAGIC 'k'
 #define IOCTL_CHARDEV_IOCPRINT _IO(CHARDEV_IOC_MAGIC,1)
 #define IOCTL_CHAR_READ  _IOR(CHARDEV_IOC_MAGIC,1,int)
 #define IOCTL_CHAR_WRITE _IOW(CHARDEV_IOC_MAGIC,3,int)
