@@ -1,0 +1,40 @@
+				intent & bundle
+一。intent	
+	在一个android应用中主要有四种组件组成，这些组件之间的通讯中，主要是由intent协助完成。
+	intent负责对应用中一次操作的动作，动作设计数据，附加数据进行描述，android则根据次intent的描述，
+负责找到对应的组件，将intent传递给调用的组件，并完成组件的调用。因此，intent在这里起着一个媒体中介的作用，
+专门提供组件互相调用的相关信息，实现调用这与被调用者之间的响应。
+	intent应用：首先，是要执行动作（action）的一个简要描述。VIEW_ACTION(查看)，EDIT_ACTION(修改)等。
+		    其次，是执行动作要操作的数据（data），Android中采用指向数据的一个URI来表示，如在联
+系人应用中，一个指向某联系人的URI可能为：content://contacts/1。这种URI表示，通过 ContentURI这个类来描述。
+另外，还有一些附加属性。category(类别),type(数据类型),comonent(组件).extras(附加信息)。
+
+二。Bundle
+	Bundle类是一个key-value对，“A mapping from String values to various Parcelable types.”
+类继承关系：
+
+java.lang.Object
+android.os.Bundle
+
+Bundle类是一个final类：
+public final class
+Bundle
+extends Objectimplements Parcelable Cloneable
+
+两个activity之间的通讯可以通过bundle类来实现：
+
+用于不同Activity之间的数据传递
+　　1.重要方法
+　　　　clear()：清除此Bundle映射中的所有保存的数据。
+　　　　clone()：克隆当前Bundle
+　　　　containsKey(String key)：返回指定key的值
+　　　　getString(String key)：返回指定key的字符
+　　　　hasFileDescriptors()：指示是否包含任何捆绑打包文件描述符
+　　　　isEmpty()：如果这个捆绑映射为空，则返回true
+　　　　putString(String key, String value):插入一个给定key的字符串值
+　　　　readFromParcel(Parcel parcel)：读取这个parcel的内容
+　　　　remove(String key)：移除指定key的值
+　　　　writeToParcel(Parcel parcel, int flags)：写入这个parcel的内容
+	注：Bundle是将数据传递到另一个上下文中或保存或回复你自己状态的数据存储方式。
+	   它的数据不是持久化状态。
+
