@@ -7,7 +7,7 @@ create time:2012-09-28
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-#define NUM_SIZE 10000
+#define NUM_SIZE 100000
 int split(int num[],int begin,int right)
 {
 	int i;
@@ -64,12 +64,12 @@ int main()
 	}
 	for(p=0;p<NUM_SIZE;p++)
 	{
-		rand[p]=random()%999; 
+		rand[p]=random()%99999; 
         }
 	start=clock();
 	sort(rand,begin,right);
 	end=clock();
-	printf("spent %lf secends\n",(double)(start-begin)/CLOCKS_PER_SEC);
+	printf("spent %lf secends\n",(double)(end-start)/CLOCKS_PER_SEC);
 	for(p=0;p<NUM_SIZE;p++)
 	{
 		fprintf(fp," *%d* ",rand[p]);
